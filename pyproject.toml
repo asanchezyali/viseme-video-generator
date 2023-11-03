@@ -7,9 +7,18 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+numpy = { version = "^1.26.1", python = ">=3.11,<3.13" }
 pre-commit = "^3.5.0"
 azure-cognitiveservices-speech = "^1.32.1"
+opencv-python = "^4.8.1.78"
+moviepy = "^1.0.3"
+torch = "^2.1.0"
+torchvision = "^0.16.0"
+matplotlib = "^3.8.1"
+treetable = "^0.2.5"
 
+[tool.black]
+line-length = 120
 
 [build-system]
 requires = ["poetry-core"]
