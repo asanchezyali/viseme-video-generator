@@ -6,8 +6,10 @@ service_region = ""
 
 speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
 speech_config.speech_synthesis_voice_name = "en-US-JaneNeural"
+
 input_text = input("Enter text to synthesize: ")
-text = f"""
+
+ssml = f"""
     <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">
         <voice name="en-US-SaraNeural">
             <mstts:viseme type="redlips_front"/>
@@ -19,36 +21,27 @@ text = f"""
         </voice>
     </speak>"""
 
-file_name = "outputaudio.wav"
+file_name = "audio/outputaudio.wav"
 file_config = speechsdk.audio.AudioOutputConfig(filename=file_name)
 
-speech_synthesizer = speechsdk.SpeechSynthesizer(
-    speech_config=speech_config, audio_config=file_config
-)
+speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=file_config)
 
 viseme_data = []
 
 
 def viseme_callback(event):
-    print(
-        "Viseme event received: audio offset: {}ms, viseme id: {}.".format(
-            event.audio_offset / 10000, event.viseme_id
-        )
-    )
-
+    print(event)
     viseme_data.append({"offset": event.audio_offset / 10000, "id": event.viseme_id})
 
 
 speech_synthesizer.viseme_received.connect(viseme_callback)
 
-result = speech_synthesizer.speak_ssml_async(ssml=text).get()
+result = speech_synthesizer.speak_ssml_async(ssml=ssml).get()
 
 if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-    print("Speech synthesized for text [{}]".format(text))
-    with open("viseme.json", "w") as f:
+    with open("visemes/viseme.json", "w") as f:
         json.dump(viseme_data, f, indent=4)
 elif result.reason == speechsdk.ResultReason.Canceled:
     cancellation_details = result.cancellation_details
-    print("Speech synthesis canceled: {}".format(cancellation_details.reason))
     if cancellation_details.reason == speechsdk.CancellationReason.Error:
         print("Error details: {}".format(cancellation_details.error_details))
