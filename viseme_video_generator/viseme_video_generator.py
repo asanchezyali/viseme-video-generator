@@ -21,7 +21,7 @@ ssml = f"""
         </voice>
     </speak>"""
 
-file_name = "audio/outputaudio.wav"
+file_name = "audio/24.wav"
 file_config = speechsdk.audio.AudioOutputConfig(filename=file_name)
 
 speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=file_config)
@@ -39,7 +39,7 @@ speech_synthesizer.viseme_received.connect(viseme_callback)
 result = speech_synthesizer.speak_ssml_async(ssml=ssml).get()
 
 if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-    with open("visemes/viseme.json", "w") as f:
+    with open("metadata/24.json", "w") as f:
         json.dump(viseme_data, f, indent=4)
 elif result.reason == speechsdk.ResultReason.Canceled:
     cancellation_details = result.cancellation_details
